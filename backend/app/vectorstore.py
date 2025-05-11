@@ -8,7 +8,7 @@ from langchain.schema import Document
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 CHROMA_PERSIST_DIRECTORY = "chroma_db"
 CHROMA_HOST = os.environ.get("CHROMA_HOST", "localhost")
-CHROMA_PORT = os.environ.get("CHROMA_PORT", "8100")
+CHROMA_PORT = os.environ.get("CHROMA_PORT", "8000")  
 
 # Singleton pattern for the vector store
 _vectorstore_instance = None
