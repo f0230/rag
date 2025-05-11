@@ -27,7 +27,7 @@ services:
     networks:
       - rag-network
 
-  # PostgreSQL Service with pgvector
+  # PostgreSQL Service con pgvector
   postgres:
     build:
       context: ./postgres
@@ -45,7 +45,7 @@ services:
       retries: 5
     networks:
       - rag-network
-      
+
   # Khoj Service
   khoj:
     image: khoj-ai/khoj:latest
@@ -61,6 +61,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - KHOJ_ADMIN_EMAIL=admin@example.com
       - KHOJ_ADMIN_PASSWORD=supersecurepassword
+      - ANONYMOUS_MODE=true
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,8 +76,11 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app       # Monta tu código fuente para desarrollo en vivo
+      - /app/node_modules   # Crea un volumen anónimo para node_modules,
+                              # preservando la versión de la imagen.
+    environment:
+      - NODE_ENV=development
     depends_on:
       - backend
     networks:

@@ -3,6 +3,7 @@ from typing import List
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.schema import Document
+from chromadb.config import Settings
 
 # Configuration
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
@@ -33,19 +34,24 @@ def get_vectorstore():
             
             logging.info(f"Connecting to ChromaDB at {CHROMA_HOST}:{CHROMA_PORT}")
             
-            # For Docker setup, use the client mode
+            # Configuración corregida para Chroma
+            client_settings = Settings(
+                chroma_api_impl="rest",
+                chroma_server_host=CHROMA_HOST,
+                chroma_server_http_port=CHROMA_PORT,
+                persist_directory=CHROMA_PERSIST_DIRECTORY
+            )
+            
             _vectorstore_instance = Chroma(
                 persist_directory=CHROMA_PERSIST_DIRECTORY,
                 embedding_function=embedding_function,
-                client_settings={"host": CHROMA_HOST, "port": CHROMA_PORT}
+                client_settings=client_settings
             )
             
             # Test connection
             try:
-                # Try to get a client and check the heartbeat
                 client = _vectorstore_instance._client
-                if hasattr(client, "heartbeat"):
-                    client.heartbeat()
+                client.heartbeat()  # Test connection
                 logging.info("Successfully connected to ChromaDB")
             except Exception as e:
                 logging.error(f"Failed to connect to ChromaDB: {e}")
@@ -57,6 +63,8 @@ def get_vectorstore():
             raise
     
     return _vectorstore_instance
+
+# Resto de tus funciones (search_vectorstore, add_documents_to_vectorstore) permanecen igual
 
 def search_vectorstore(query: str, k: int = 5):
     """

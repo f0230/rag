@@ -1,49 +1,82 @@
-from typing import List, Any
+from typing import List, Any, Dict
+import requests
+import json
+import logging
+from langchain.schema import BaseRetriever
+from langchain.chains.base import Chain
 
+class KhojRetriever(BaseRetriever):
+    """Retriever que combina Khoj API con el vectorstore local"""
+    
+    def __init__(self, vectorstore, khoj_url: str):
+        self.vectorstore = vectorstore
+        self.khoj_url = khoj_url
+    
+    def get_relevant_documents(self, query: str) -> List[Dict]:
+        # Primero obtenemos documentos relevantes del vectorstore
+        docs = self.vectorstore.similarity_search(query, k=5)
+        
+        # Convertimos a formato compatible con Khoj si es necesario
+        return [{"content": doc.page_content, "metadata": doc.metadata} for doc in docs]
 
-def _call(
-        self,
-        prompt: str,
-        stop: List[str] = None,
-        run_manager: "CallbackManagerForLLMRun" = None,
-        **kwargs: Any,
-    ) -> str:
-        """Call the Khoj API and return the response."""
-        import requests
-        import json
-        import logging
-
-        logging.info(f"Calling Khoj API with prompt: {prompt[:100]}...")
-
+class KhojQAChain(Chain):
+    """Cadena personalizada para integrar Khoj con el vectorstore"""
+    
+    def __init__(self, retriever: KhojRetriever):
+        super().__init__()
+        self.retriever = retriever
+    
+    @property
+    def input_keys(self) -> List[str]:
+        return ["question"]
+    
+    @property
+    def output_keys(self) -> List[str]:
+        return ["answer", "source_documents"]
+    
+    def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        question = inputs["question"]
+        
         try:
-            # First check if Khoj is available
-            health_check = requests.get(f"{self.khoj_url}/api/health")
-            if health_check.status_code != 200:
-                logging.error(f"Khoj service is not available. Status: {health_check.status_code}")
-                return "Error: Khoj service is not available. Please check if the service is running."
-
-            # If Khoj is available, make the actual request
+            # Obtenemos documentos relevantes
+            docs = self.retriever.get_relevant_documents(question)
+            
+            # Llamamos a la API de Khoj
             response = requests.post(
-                f"{self.khoj_url}/api/chat",
+                f"{self.retriever.khoj_url}/api/chat",
                 headers={"Content-Type": "application/json"},
                 data=json.dumps({
-                    "message": prompt,
-                    "use_context": True,  # Enable retrieval
+                    "message": question,
+                    "use_context": True,
+                    "context": docs[:3]  # Enviamos los 3 documentos más relevantes
                 }),
-                timeout=30  # Add timeout to prevent hanging
+                timeout=30
             )
             response.raise_for_status()
             result = response.json()
-            return result.get("response", "No response from Khoj")
-        except requests.exceptions.ConnectionError as e:
-            logging.error(f"Connection error to Khoj API: {e}")
-            return "Error: Could not connect to Khoj service. Please ensure the service is running."
-        except requests.exceptions.Timeout as e:
-            logging.error(f"Timeout error calling Khoj API: {e}")
-            return "Error: Request to Khoj timed out. The service might be under heavy load."
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Request error calling Khoj API: {e}")
-            return f"Error: Request to Khoj failed. {str(e)}"
+            
+            return {
+                "answer": result.get("response", "No response from Khoj"),
+                "source_documents": docs
+            }
+            
         except Exception as e:
-            logging.error(f"Unexpected error calling Khoj API: {e}")
-            return f"Error: Could not get response from Khoj. {str(e)}"
+            logging.error(f"Error in KhojQAChain: {e}")
+            return {
+                "answer": f"Error processing your question: {str(e)}",
+                "source_documents": []
+            }
+
+def get_qa_chain(vectorstore, khoj_url: str = "http://khoj:4000"):
+    """
+    Crea y retorna una cadena de QA que integra Khoj con el vectorstore
+    
+    Args:
+        vectorstore: Instancia del vectorstore
+        khoj_url: URL del servicio Khoj
+        
+    Returns:
+        KhojQAChain: Cadena configurada para hacer QA
+    """
+    retriever = KhojRetriever(vectorstore, khoj_url)
+    return KhojQAChain(retriever)

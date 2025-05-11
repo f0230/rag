@@ -139,6 +139,10 @@ async def query(request: QueryRequest):
         else:
             raise HTTPException(status_code=500, detail=f"Error al procesar su consulta: {str(e)}")
 
-if __name__ == "__main__":
+# Elimina el bloque if __name__ == "__main__": o reemplázalo con:
+def start_server():
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, workers=1, reload=False)
+
+if __name__ == "__main__":
+    start_server()
