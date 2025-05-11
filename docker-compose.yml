@@ -1,0 +1,60 @@
+services:
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+    environment:
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8000
+    depends_on:
+      - chroma
+    networks:
+      - rag-network
+
+  # ChromaDB Vector Database Service
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    volumes:
+      - chroma-data:/chroma/chroma
+    ports:
+      - "8100:8000"
+    networks:
+      - rag-network
+
+  # Khoj LLM Service
+  khoj:
+    image: khoj-ai/khoj:latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - khoj-data:/data
+    networks:
+      - rag-network
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge
+
+volumes:
+  chroma-data:
+  khoj-data:
