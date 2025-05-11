@@ -27,7 +27,24 @@ services:
     networks:
       - rag-network
 
-  #  khoj
+    # PostgreSQL Service con pgvector
+  postgres:
+    image: ankane/pgvector:latest
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=khoj
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rag-network
+
+  # Khoj Service
   khoj:
     image: khoj-ai/khoj:latest
     ports:
@@ -36,8 +53,13 @@ services:
       - khoj-data:/data
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/khoj
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=khoj
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy  # Espera hasta que postgres esté saludable
     networks:
       - rag-network
 
@@ -62,16 +84,4 @@ networks:
 volumes:
   chroma-data:
   khoj-data:
-
-
-  # Añadir a docker-compose.yml
-  postgres:
-    image: postgres:14
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=khoj
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - rag-network
+  postgres-data:
