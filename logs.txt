@@ -1,0 +1,155 @@
+ *  Executing task: docker compose --file '/home/fran/Documents/RAG/proyecto-rag/docker-compose.yml' --project-name 'proyecto-rag' logs --follow --tail '1000' 
+
+frontend-1  | npm warn exec The following package was not found and will be installed: next@15.3.2
+frontend-1  |    ▲ Next.js 15.3.2
+frontend-1  |    - Local:        http://localhost:3000
+frontend-1  |    - Network:      http://172.18.0.5:3000
+frontend-1  | 
+frontend-1  |  ✓ Starting...
+chroma-1    | 
+chroma-1    | ==========
+chroma-1    | persist_path: "/data"
+chroma-1    | 
+chroma-1    | ==========
+chroma-1    | 
+chroma-1    | 
+frontend-1  |  ✓ Ready in 1941ms
+khoj-1      | Traceback (most recent call last):
+backend-1   | INFO:     Will watch for changes in these directories: ['/app']
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/backends/utils.py", line 103, in _execute
+postgres-1  | The files belonging to this database system will be owned by user "postgres".
+postgres-1  | This user must also own the server process.
+postgres-1  | 
+postgres-1  | The database cluster will be initialized with locale "en_US.utf8".
+postgres-1  | The default database encoding has accordingly been set to "UTF8".
+chroma-1    |                 (((((((((    (((((####
+chroma-1    |              ((((((((((((((((((((((#########
+backend-1   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend-1   | INFO:     Started reloader process [1] using WatchFiles
+backend-1   | INFO:     Started server process [8]
+khoj-1      |     return self.cursor.execute(sql)
+khoj-1      | psycopg2.errors.UndefinedFile: could not open extension control file "/usr/share/postgresql/14/extension/vector.control": No such file or directory
+frontend-1  |  ○ Compiling / ...
+frontend-1  |  ⨯ ./pages/index.js
+frontend-1  | Module not found: Can't resolve 'react/jsx-dev-runtime'
+frontend-1  | 
+frontend-1  | https://nextjs.org/docs/messages/module-not-found
+frontend-1  |  ⨯ ./pages/index.js
+khoj-1      | 
+khoj-1      | 
+backend-1   | INFO:     Waiting for application startup.
+backend-1   | INFO:     Application startup complete.
+chroma-1    |            ((((((((((((((((((((((((###########
+chroma-1    |          ((((((((((((((((((((((((((############
+khoj-1      | The above exception was the direct cause of the following exception:
+khoj-1      | 
+khoj-1      | Traceback (most recent call last):
+khoj-1      |   File "/app/src/khoj/main.py", line 52, in <module>
+khoj-1      |     call_command("migrate", "--noinput")
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/core/management/__init__.py", line 194, in call_command
+khoj-1      |     return command.execute(*args, **defaults)
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/core/management/base.py", line 459, in execute
+khoj-1      |     output = self.handle(*args, **options)
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/core/management/base.py", line 107, in wrapper
+khoj-1      |     res = handle_func(*args, **kwargs)
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/core/management/commands/migrate.py", line 357, in handle
+khoj-1      |     post_migrate_state = executor.migrate(
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/migrations/executor.py", line 135, in migrate
+khoj-1      |     state = self._migrate_all_forwards(
+frontend-1  | Module not found: Can't resolve 'react/jsx-dev-runtime'
+frontend-1  | 
+frontend-1  | https://nextjs.org/docs/messages/module-not-found
+frontend-1  |  GET / 500 in 3918ms
+frontend-1  |  GET / 500 in 20ms
+frontend-1  |  ⚠ Cross origin request detected from 172.18.0.5 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/migrations/executor.py", line 167, in _migrate_all_forwards
+khoj-1      |     state = self.apply_migration(
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/migrations/executor.py", line 255, in apply_migration
+khoj-1      |     state = migration.apply(state, schema_editor)
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/migrations/migration.py", line 132, in apply
+khoj-1      |     operation.database_forwards(
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/contrib/postgres/operations.py", line 28, in database_forwards
+khoj-1      |     schema_editor.execute(
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/backends/postgresql/schema.py", line 48, in execute
+khoj-1      |     return super().execute(sql, None)
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/backends/base/schema.py", line 202, in execute
+khoj-1      |     cursor.execute(sql, params)
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/backends/utils.py", line 79, in execute
+khoj-1      |     return self._execute_with_wrappers(
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+khoj-1      |     return executor(sql, params, many, context)
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/backends/utils.py", line 100, in _execute
+khoj-1      |     with self.db.wrap_database_errors:
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/utils.py", line 91, in __exit__
+khoj-1      |     raise dj_exc_value.with_traceback(traceback) from exc_value
+khoj-1      |   File "/usr/local/lib/python3.10/dist-packages/django/db/backends/utils.py", line 103, in _execute
+khoj-1      |     return self.cursor.execute(sql)
+khoj-1      | django.db.utils.OperationalError: could not open extension control file "/usr/share/postgresql/14/extension/vector.control": No such file or directory
+frontend-1  | Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+khoj-1      | 
+postgres-1  | The default text search configuration will be set to "english".
+postgres-1  | 
+postgres-1  | Data page checksums are disabled.
+postgres-1  | 
+postgres-1  | fixing permissions on existing directory /var/lib/postgresql/data ... ok
+postgres-1  | creating subdirectories ... ok
+postgres-1  | selecting dynamic shared memory implementation ... posix
+postgres-1  | selecting default max_connections ... 100
+postgres-1  | selecting default shared_buffers ... 128MB
+postgres-1  | selecting default time zone ... Etc/UTC
+postgres-1  | creating configuration files ... ok
+postgres-1  | running bootstrap script ... ok
+postgres-1  | performing post-bootstrap initialization ... ok
+chroma-1    |         (((((((((((((((((((((((((((#############
+chroma-1    |         (((((((((((((((((((((((((((#############
+chroma-1    |          (((((((((((((((((((((((((##############
+chroma-1    |          ((((((((((((((((((((((((##############
+chroma-1    |            (((((((((((((((((((((#############
+chroma-1    |              ((((((((((((((((##############
+chroma-1    |                 (((((((((    #########
+chroma-1    | 
+chroma-1    | Saving data to: /data
+chroma-1    | Connect to Chroma at: http://localhost:8000
+chroma-1    | Getting started guide: https://docs.trychroma.com/docs/overview/getting-started
+chroma-1    | 
+chroma-1    | OpenTelemetry is not enabled because it is missing from the config.
+chroma-1    | Listening on 0.0.0.0:8000
+postgres-1  | initdb: warning: enabling "trust" authentication for local connections
+postgres-1  | You can change this by editing pg_hba.conf or using the option -A, or
+postgres-1  | --auth-local and --auth-host, the next time you run initdb.
+postgres-1  | syncing data to disk ... ok
+postgres-1  | 
+postgres-1  | 
+postgres-1  | Success. You can now start the database server using:
+postgres-1  | 
+postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
+postgres-1  | 
+postgres-1  | waiting for server to start....2025-05-11 02:33:03.661 UTC [48] LOG:  starting PostgreSQL 14.18 (Debian 14.18-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+postgres-1  | 2025-05-11 02:33:03.663 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2025-05-11 02:33:03.670 UTC [49] LOG:  database system was shut down at 2025-05-11 02:33:02 UTC
+postgres-1  | 2025-05-11 02:33:03.674 UTC [48] LOG:  database system is ready to accept connections
+postgres-1  |  done
+postgres-1  | server started
+postgres-1  | CREATE DATABASE
+postgres-1  | 
+postgres-1  | 
+postgres-1  | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+postgres-1  | 
+postgres-1  | 2025-05-11 02:33:03.864 UTC [48] LOG:  received fast shutdown request
+postgres-1  | waiting for server to shut down....2025-05-11 02:33:03.865 UTC [48] LOG:  aborting any active transactions
+postgres-1  | 2025-05-11 02:33:03.867 UTC [48] LOG:  background worker "logical replication launcher" (PID 55) exited with exit code 1
+postgres-1  | 2025-05-11 02:33:03.869 UTC [50] LOG:  shutting down
+postgres-1  | 2025-05-11 02:33:03.884 UTC [48] LOG:  database system is shut down
+postgres-1  |  done
+postgres-1  | server stopped
+postgres-1  | 
+postgres-1  | PostgreSQL init process complete; ready for start up.
+postgres-1  | 
+postgres-1  | 2025-05-11 02:33:03.989 UTC [1] LOG:  starting PostgreSQL 14.18 (Debian 14.18-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+postgres-1  | 2025-05-11 02:33:03.989 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2025-05-11 02:33:03.989 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2025-05-11 02:33:03.993 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2025-05-11 02:33:04.002 UTC [63] LOG:  database system was shut down at 2025-05-11 02:33:03 UTC
+postgres-1  | 2025-05-11 02:33:04.008 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2025-05-11 02:33:10.710 UTC [78] ERROR:  could not open extension control file "/usr/share/postgresql/14/extension/vector.control": No such file or directory
+postgres-1  | 2025-05-11 02:33:10.710 UTC [78] STATEMENT:  CREATE EXTENSION IF NOT EXISTS "vector"

@@ -27,9 +27,9 @@ services:
     networks:
       - rag-network
 
-    # PostgreSQL Service con pgvector
+  # PostgreSQL Service
   postgres:
-    image: ankane/pgvector:latest
+    image: postgres:14
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -57,9 +57,11 @@ services:
       - POSTGRES_DB=khoj
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - KHOJ_ADMIN_EMAIL=admin@example.com
+      - KHOJ_ADMIN_PASSWORD=supersecurepassword
     depends_on:
       postgres:
-        condition: service_healthy  # Espera hasta que postgres esté saludable
+        condition: service_healthy
     networks:
       - rag-network
 
