@@ -27,9 +27,9 @@ services:
     networks:
       - rag-network
 
-  # PostgreSQL Service
+  # PostgreSQL Service with pgvector
   postgres:
-    image: postgres:14
+    image: ankane/pgvector:latest
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -74,6 +74,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     networks:

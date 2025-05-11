@@ -2,20 +2,17 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copiar los archivos de package.json y package-lock.json
 COPY package*.json ./
 
-# Install dependencies
+# Instalar dependencias
 RUN npm install
 
-# Copy the rest of the application
+# Copiar el resto de archivos
 COPY . .
 
-# Build the application (for production)
-# RUN npm run build
-
-# Expose port
+# Exponer el puerto
 EXPOSE 3000
 
-# Start the application in development mode
-CMD ["npx", "next", "dev"]
+# Ejecutar la aplicación
+CMD ["npm", "run", "dev"]
