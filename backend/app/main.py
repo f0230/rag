@@ -23,7 +23,36 @@ app.add_middleware(
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    import requests
+    
+    services_status = {
+        "backend": "healthy",
+        "chroma": "unknown",
+        "khoj": "unknown"
+    }
+    
+    # Check ChromaDB
+    try:
+        vectorstore = get_vectorstore()
+        # If we got here without errors, ChromaDB is working
+        services_status["chroma"] = "healthy"
+    except Exception as e:
+        services_status["chroma"] = f"unhealthy: {str(e)}"
+    
+    # Check Khoj
+    try:
+        response = requests.get("http://khoj:4000/api/health", timeout=2)
+        if response.status_code == 200:
+            services_status["khoj"] = "healthy"
+        else:
+            services_status["khoj"] = f"unhealthy: status code {response.status_code}"
+    except Exception as e:
+        services_status["khoj"] = f"unhealthy: {str(e)}"
+    
+    return {
+        "status": "healthy",
+        "services": services_status
+    }
 
 # Models
 class QueryRequest(BaseModel):
@@ -55,14 +84,36 @@ async def upload_file(file: UploadFile = File(...)):
 # Query endpoint
 @app.post("/query", response_model=QueryResponse)
 async def query(request: QueryRequest):
+    import logging
+    
+    logging.info(f"Received query: {request.query}")
+    
     try:
+        # Check if we have documents in the vectorstore
         vectorstore = get_vectorstore()
+        
+        # Get document count - if 0, return a helpful message
+        try:
+            collection = vectorstore._collection
+            count = collection.count()
+            if count == 0:
+                return {
+                    "answer": "No hay documentos para consultar. Por favor, sube algún documento primero.",
+                    "sources": []
+                }
+        except Exception as e:
+            logging.error(f"Error checking document count: {e}")
+            # Continue with query anyway
+        
+        # Create QA chain
         qa_chain = get_qa_chain(vectorstore)
         
         # Execute chain
+        logging.info("Executing QA chain...")
         result = qa_chain(
             {"question": request.query, "chat_history": request.chat_history}
         )
+        logging.info("QA chain executed successfully")
         
         # Format response
         response = {
@@ -72,7 +123,21 @@ async def query(request: QueryRequest):
         
         return response
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error querying: {str(e)}")
+        logging.exception(f"Error in query endpoint: {e}")
+        
+        # Return a more user-friendly error
+        if "khoj" in str(e).lower():
+            raise HTTPException(
+                status_code=503, 
+                detail="El servicio Khoj no está disponible. Por favor, espere un momento e intente de nuevo."
+            )
+        elif "chroma" in str(e).lower():
+            raise HTTPException(
+                status_code=503, 
+                detail="Error al conectar con la base de datos vectorial. Por favor, espere un momento e intente de nuevo."
+            )
+        else:
+            raise HTTPException(status_code=500, detail=f"Error al procesar su consulta: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

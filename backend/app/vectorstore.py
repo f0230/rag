@@ -26,14 +26,35 @@ def get_vectorstore():
     global _vectorstore_instance
     
     if _vectorstore_instance is None:
-        embedding_function = get_embedding_function()
+        import logging
         
-        # For Docker setup, use the client mode
-        _vectorstore_instance = Chroma(
-            persist_directory=CHROMA_PERSIST_DIRECTORY,
-            embedding_function=embedding_function,
-            client_settings={"host": CHROMA_HOST, "port": CHROMA_PORT}
-        )
+        try:
+            embedding_function = get_embedding_function()
+            
+            logging.info(f"Connecting to ChromaDB at {CHROMA_HOST}:{CHROMA_PORT}")
+            
+            # For Docker setup, use the client mode
+            _vectorstore_instance = Chroma(
+                persist_directory=CHROMA_PERSIST_DIRECTORY,
+                embedding_function=embedding_function,
+                client_settings={"host": CHROMA_HOST, "port": CHROMA_PORT}
+            )
+            
+            # Test connection
+            try:
+                # Try to get a client and check the heartbeat
+                client = _vectorstore_instance._client
+                if hasattr(client, "heartbeat"):
+                    client.heartbeat()
+                logging.info("Successfully connected to ChromaDB")
+            except Exception as e:
+                logging.error(f"Failed to connect to ChromaDB: {e}")
+                _vectorstore_instance = None
+                raise
+                
+        except Exception as e:
+            logging.error(f"Error initializing vector store: {e}")
+            raise
     
     return _vectorstore_instance
 
