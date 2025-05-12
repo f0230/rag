@@ -21,25 +21,16 @@ def get_embedding_function():
     return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
 
 def get_vectorstore():
-    """
-    Get a singleton instance of the Chroma vector store
-    """
     global _vectorstore_instance
     
     if _vectorstore_instance is None:
-        import logging
-        
         try:
             embedding_function = get_embedding_function()
             
-            logging.info(f"Connecting to ChromaDB at {CHROMA_HOST}:{CHROMA_PORT}")
-            
             # Configuración corregida para Chroma
             client_settings = Settings(
-                chroma_api_impl="rest",
                 chroma_server_host=CHROMA_HOST,
                 chroma_server_http_port=CHROMA_PORT,
-                persist_directory=CHROMA_PERSIST_DIRECTORY
             )
             
             _vectorstore_instance = Chroma(
@@ -50,17 +41,13 @@ def get_vectorstore():
             
             # Test connection
             try:
-                client = _vectorstore_instance._client
-                client.heartbeat()  # Test connection
-                logging.info("Successfully connected to ChromaDB")
+                collection = _vectorstore_instance._client.get_or_create_collection("test")
+                collection.count()  # Simple operation to test connection
             except Exception as e:
-                logging.error(f"Failed to connect to ChromaDB: {e}")
-                _vectorstore_instance = None
-                raise
+                raise ConnectionError(f"Failed to connect to ChromaDB: {e}")
                 
         except Exception as e:
-            logging.error(f"Error initializing vector store: {e}")
-            raise
+            raise RuntimeError(f"Error initializing vector store: {e}")
     
     return _vectorstore_instance
 
